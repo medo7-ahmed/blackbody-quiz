@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>امتحان Blackbody Radiation</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mut:#6b7280;--pri:#4f46e5;--ok:#16a34a;--bad:#dc2626;--bd:#e5e7eb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1220;--card:#191d30;--tx:#eef0f7;--mut:#9aa1b5;--pri:#818cf8;--ok:#4ade80;--bad:#f87171;--bd:#2a2f47;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.6}
+.w{max-width:640px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;margin-bottom:12px}
+h1{font-size:22px;margin:0 0 6px}p{margin:6px 0;color:var(--mut)}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:12px 14px;width:100%;margin:6px 0;text-align:start}
+button.p{background:var(--pri);color:#fff;border-color:var(--pri);text-align:center;font-weight:600}
+.q{font-size:18px;font-weight:600;direction:ltr;text-align:left;margin:10px 0}
+.o{direction:ltr;text-align:left}
+.o.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--card))}
+.o.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 15%,var(--card))}
+.bar{height:6px;background:var(--bd);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pri);width:0}
+.top{display:flex;justify-content:space-between;color:var(--mut);font-size:14px;margin-bottom:8px}
+.ex{margin-top:10px;padding:10px;border-radius:10px;background:var(--bg);direction:ltr;text-align:left;font-size:14px}
+.big{font-size:44px;font-weight:700;text-align:center;color:var(--pri)}
+.wr{direction:ltr;text-align:left;font-size:14px;border-top:1px solid var(--bd);padding:8px 0}
+</style>
+</head>
+<body>
+<div class="w" id="app"></div>
+<script>
+// صيغة السطر: سؤال|أ|ب|ج|رقم الإجابة الصحيحة (0-2)|شرح
+const C=`Frequency of microwaves is ___ frequency of visible light.|equal to|higher than|lower than|2|Microwaves have longer wavelength, so lower frequency.
+Apple seems red because it ___.|absorbs all wavelengths and reflects red|absorbs all wavelengths and transmits red|absorbs and emits red only|0|
+When a body is in thermal equilibrium with surroundings, ___.|it does not emit|it does not absorb|it emits as much as it absorbs|2|
+By Kirchhoff, apple’s absorption ability vs emission ability for yellow is ___.|higher than|equal to|lower than|1|
+Blackbody ___ all wavelengths of radiation.|absorbs|emits|absorbs and emits|2|
+Radiation of a blackbody depends on its ___.|composition|temperature|composition and temperature|1|
+Blackbody at room temperature emits mostly ___ radiation.|infrared|visible|ultraviolet|0|
+___ predicted infinite radiation at high frequencies.|Wien-Lummer|Rayleigh-Jeans|Stefan-Boltzmann|1|Ultraviolet catastrophe.
+Planck: blackbody emits ___ at any temperature.|more low-energy quanta than high-energy|equal numbers of both|fewer low-energy quanta than high-energy|0|
+Unit of radiation power is:|W|W/m²|W/m³|0|
+Radiation of any body is normally composed of:|single wavelength|wavelength range|all wavelengths|1|
+A body transparent to visible light ___ IR radiation.|must transmit|may transmit|does not transmit|1|
+Radiation of a normal (non-black) body depends on:|composition|temperature|composition and temperature|2|
+Emissivity depends on:|surface nature|temperature|surface nature and temperature|2|
+A good absorber is:|good emitter|bad reflector|good emitter and bad reflector|2|
+Blackbody emissivity is:|one|zero|between 0 and 1|0|
+Natural blackbodies are:|Stars|Planets|Stars and planets|0|
+In Wien-Lummer experiment, the collimator:|makes beam parallel|concentrates diffracted beam|detects spectral emittance|0|
+Diffraction grating:|diffracts radiation|analyzes radiation|concentrates diffracted beam|1|It separates radiation into its wavelengths.
+Behavior of blackbody curve is ___ temperature.|dependent on|sometimes dependent on|independent of|2|General shape stays the same.
+Blackbody radiation spectrum is:|continuous|line|wide range|0|
+Which has lower emissivity?|Light and rough|Light and smooth|Dark and smooth|1|
+A body that glows red is ___ one that glows blue.|colder than|hotter than|may be either|0|Red has longer wavelength, so lower T.
+Radiation intensity is proportional to T⁴ according to:|Stefan-Boltzmann|Wien|Rayleigh-Jeans|0|
+Emitted power of real body / blackbody at same T =|efficiency|effectivity|emissivity|2|
+Peak wavelength is inversely proportional to T according to:|Stefan-Boltzmann|Wien|Rayleigh-Jeans|1|
+Which law agrees with experiment at high frequencies (short λ)?|Planck|Rayleigh-Jeans|Wien|2|
+Which law agrees with experiment at all wavelengths?|Planck|Rayleigh-Jeans|Wien|0|
+Planck called energy packets:|corpuscles|quanta|photons|1|Einstein later called them photons.`.trim().split("\n");
+const F=`What is a black body?|Perfect absorber, poor emitter|Poor absorber, perfect emitter|Perfect absorber and perfect emitter|2|
+By Wien’s law, as T increases, the peak wavelength:|shifts to longer λ|shifts to shorter λ|stays the same|1|
+Blackbody at 127 °C and 927 °C. Ratio of radiation emitted?|1:81|1:27|1:256|0|(400/1200)⁴ = (1/3)⁴ = 1/81
+Blackbody at 27 °C and 927 °C. Ratio of radiation emitted?|1:256|1:64|1:16|0|(300/1200)⁴ = (1/4)⁴ = 1/256
+Sun surface 5700 K. Peak wavelength? (b = 2.898×10⁻³)|1.966×10⁶ m|5.084×10⁻⁷ m|16.518 m|1|λ = b/T = 508.4 nm
+As wavelength increases, emitted energy first ___ then ___.|increases, becomes constant|decreases, increases|increases, decreases|2|
+Hot objects emit ___ light than cool objects.|more red|more yellow|more blue|2|
+Iron rod heated: which color means the lowest temperature?|red|white|blue|0|
+A body absorbs IR slower than it emits. Its temperature:|decreases|remains constant|increases|0|
+Blackbody bulb: T needed for λmax = 400 nm?|7245×10⁻³ K|7245 K|72.45 K|1|T = b/λ = 2.898×10⁻³/400×10⁻⁹
+Blackbody has λ at 2000 K. Wavelength at 10,000 K?|5λ|λ|λ/5|2|λT = const
+Blackbody has λ at 2000 K. Wavelength at 3000 K?|2λ/3|3λ/2|81λ/16|0|
+Rayleigh-Jeans predicted infinite intensity at:|long wavelengths|short wavelengths|low frequencies|1|
+Wien’s law: relationship between frequency and temperature is:|inverse|linear proportional|no direct relation|1|f_max ∝ T
+Wien’s law: relationship between wavelength and temperature is:|inverse|linear proportional|no direct relation|0|
+What refers to intensity dropping to zero at short wavelengths (per classical theory’s failure)?|Ultraviolet catastrophe|Infrared catastrophe|Visible light catastrophe|0|
+Planck: probability of high-frequency radiation ___ as T rises.|is constant|decreases|increases|2|
+Planck: loss of energy by low-energy quanta is ___ loss by very high-energy quanta.|lower than|larger than|equal to|1|
+Kirchhoff: a body emits ___ it absorbs at a given T and frequency.|with higher efficiency than|with lower efficiency than|the same as|2|
+A perfectly white body ___ 100% of radiation.|emits|reflects|absorbs|1|
+Planck: energy of EM waves is proportional to:|frequency|temperature|wavelength|0|E = hf`.trim().split("\n");
+const P=`Star: detector intensity 8.29×10⁸ W/m². Temperature?|10,996 K|9,996 K|8,996 K|0|T = (I/σ)^¼ ≈ 10,996 K
+Same star: peak wavelength?|322 nm|290 nm|264 nm|2|λ = b/T = 2.9×10⁻³/10996 ≈ 264 nm
+Same star: spectral emittance in 5 nm range?|1.66×10¹⁶ W/m³|1.66×10¹⁷ W/m³|1.66×10¹⁸ W/m³|1|S = ΔI/Δλ = 8.29×10⁸/5×10⁻⁹
+Same star: frequency at peak wavelength?|1.14×10¹⁵ Hz|2.14×10¹⁵ Hz|3.14×10¹⁵ Hz|0|f = c/λ = 3×10⁸/264×10⁻⁹
+Same star radiates 2.7×10³² W. Radius?|2.61×10¹¹ m|1.61×10¹¹ m|0.61×10¹¹ m|1|R = √(P/4πI)
+Visible light 400–700 nm equals frequency range (THz):|429–750|330–650|520–840|0|f = c/λ
+Bulb 100 W. Energy radiated in 24 h?|2.4×10³ J|1.44×10⁵ J|8.64×10⁶ J|2|E = P·t = 100×86400
+Sun radius 6.96×10⁸ m, intensity 6.42×10⁷ W/m². Power?|3.91×10²⁴ W|3.91×10²⁶ W|3.91×10²⁸ W|1|P = I·4πR²
+Spectral emittance 600–605 nm, I = 3.9×10⁵ W/m²?|8.71×10¹³ W/m³|7.81×10¹³ W/m³|1.87×10¹³ W/m³|1|S = 3.9×10⁵/5×10⁻⁹
+Thin square plate 10 cm side, 800 °C, e = 0.6. Emitted power?|900 W|800 W|700 W|0|P = σeAT⁴ with A = 2 sides = 0.02 m²
+Tungsten sphere r = 1.5 cm in 300 K room, e = 0.35. Power absorbed?|0.25 W|0.35 W|0.45 W|2|Pa = σeA·Ts⁴
+Human body 1.2 m², 30 °C, surroundings 20 °C, e≈1. Net power?|62 W|72 W|82 W|1|P = σeA(T⁴ − Ts⁴)
+Dark sunspot at 4000 K. Intensity?|1.45×10⁷ W/m²|1.35×10⁷ W/m²|1.45×10⁶ W/m²|0|I = σT⁴
+Star Rigel: 2.7×10³² W, T = 11000 K. Radius?|1.61×10¹¹ m|2.59×10²² m|1.61×10²² m|0|R = √(P/4πσT⁴)
+Sun blackbody at 5800 K. Peak wavelength?|400 nm|450 nm|500 nm|2|λ = b/T = 2.9×10⁻³/5800`.trim().split("\n");
+const parse=(l,cat)=>{const a=l.split("|");return{q:a[0],o:a.slice(1,4),a:+a[4],e:a[5]||"",cat}};
+const SETS={c:C.map(l=>parse(l,"c")),f:F.map(l=>parse(l,"f")),p:P.map(l=>parse(l,"p"))};
+const app=document.getElementById("app");
+let qs=[],i=0,sc=0,wrong=[],done=false;
+const shuf=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+function home(){
+  app.innerHTML=`<div class="card"><h1>امتحان Blackbody Radiation</h1><p>Modern Physics (BES 282) – ${SETS.c.length+SETS.f.length+SETS.p.length} سؤال MCQ. اختار القسم:</p>
+  <button class="p" onclick="start(['c','f','p'])">كل الأسئلة (عشوائي)</button>
+  <button onclick="start(['c'])">أسئلة المفاهيم (${SETS.c.length})</button>
+  <button onclick="start(['f'])">أسئلة الفاينل والميدترم (${SETS.f.length})</button>
+  <button onclick="start(['p'])">المسائل الحسابية (${SETS.p.length})</button>
+  <button onclick="start(['c','f','p'],20)">امتحان سريع (20 سؤال)</button></div>`;
+}
+function start(cats,n){let a=[];cats.forEach(c=>a=a.concat(SETS[c]));a=shuf(a);qs=n?a.slice(0,n):a;i=0;sc=0;wrong=[];show()}
+function show(){
+  const x=qs[i];done=false;
+  app.innerHTML=`<div class="card"><div class="top"><span>سؤال ${i+1} / ${qs.length}</span><span>الدرجة: ${sc}</span></div>
+  <div class="bar"><i style="width:${i/qs.length*100}%"></i></div><div class="q">${x.q}</div>
+  ${x.o.map((t,k)=>`<button class="o" onclick="pick(${k})">${"ABC"[k]}) ${t}</button>`).join("")}
+  <div id="fb"></div></div>`;
+}
+function pick(k){
+  if(done)return;done=true;const x=qs[i],b=document.querySelectorAll(".o");
+  b[x.a].classList.add("ok");
+  if(k===x.a){sc++}else{b[k].classList.add("no");wrong.push(x)}
+  const last=i===qs.length-1;
+  document.getElementById("fb").innerHTML=`<p style="color:${k===x.a?"var(--ok)":"var(--bad)"};font-weight:600">${k===x.a?"إجابة صح ✅":"غلط ❌ – الصح: "+"ABC"[x.a]}</p>
+  ${x.e?`<div class="ex">${x.e}</div>`:""}<button class="p" style="margin-top:12px" onclick="next()">${last?"شوف النتيجة":"السؤال اللي بعده"}</button>`;
+}
+function next(){i++;i<qs.length?show():fin()}
+function fin(){
+  const pct=Math.round(sc/qs.length*100);
+  app.innerHTML=`<div class="card"><div class="big">${sc} / ${qs.length}</div><p style="text-align:center">${pct}% – ${pct>=85?"ممتاز يا هندسة 🔥":pct>=60?"كويس، راجع الغلط":"محتاج مذاكرة أكتر، حاول تاني"}</p>
+  ${wrong.length?`<h3>الأسئلة اللي غلطت فيها</h3>`+wrong.map(x=>`<div class="wr"><b>${x.q}</b><br>✔ ${"ABC"[x.a]}) ${x.o[x.a]}${x.e?"<br><i>"+x.e+"</i>":""}</div>`).join(""):""}
+  ${wrong.length?`<button class="p" onclick="qs=shuf(wrong);i=0;sc=0;wrong=[];show()">أعيد الأسئلة الغلط بس</button>`:""}
+  <button onclick="home()">الرئيسية</button></div>`;
+}
+home();
+</script>
+</body>
+</html>
